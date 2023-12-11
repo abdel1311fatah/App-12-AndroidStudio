@@ -1,10 +1,15 @@
 package com.example.app12_2023_24;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -31,8 +36,15 @@ public class MainActivity extends AppCompatActivity {
         blue = (RadioButton) findViewById(R.id.rbBlue);
         red = (RadioButton) findViewById(R.id.rbRed);
         green = (RadioButton) findViewById(R.id.rbGreen);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
     public void color(View view) {
 
         // https://www.htcmania.com/showthread.php?t=338533
@@ -47,6 +59,30 @@ public class MainActivity extends AppCompatActivity {
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
+    }
+
+    public void save(View view){
+        SharedPreferences preferences=getSharedPreferences("agenda", Context.MODE_PRIVATE);
+        String nom = name.getText().toString();
+        String correu = email.getText().toString();
+        SharedPreferences.Editor editor= preferences.edit();
+        editor.putString("user",nom);
+        editor.putString("correu",correu);
+        editor.commit();
+    }
+
+    public void recover(View view){
+        SharedPreferences preferences = getSharedPreferences("agenda",Context.MODE_PRIVATE);
+        String nom = preferences.getString("user","");
+        String correu = preferences.getString("correu","");
+        name.setText(nom);
+        email.setText(correu);
+
+        Intent intent = new Intent(this, MainActivity2.class);
+        intent.putExtra("username", name.getText().toString());
+        intent.putExtra("useremail", email.getText().toString());
+        startActivity(intent);
+
     }
 
     public void exit(View view) {
