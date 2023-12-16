@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton red;
     private RadioButton green;
     private ConstraintLayout constraintLayout;
+    private int colorFondo = 0;
 
     @Override
 
@@ -50,10 +51,13 @@ public class MainActivity extends AppCompatActivity {
         // https://www.htcmania.com/showthread.php?t=338533
         try {
             if (blue.isChecked()) {
+                colorFondo = Color.BLUE;
                 constraintLayout.setBackgroundColor(Color.BLUE);
             } else if (red.isChecked()) {
+                colorFondo = Color.RED;
                 constraintLayout.setBackgroundColor(Color.RED);
             } else if (green.isChecked()) {
+                colorFondo = Color.GREEN;
                 constraintLayout.setBackgroundColor(Color.GREEN);
             }
         } catch (RuntimeException e) {
@@ -65,9 +69,11 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences=getSharedPreferences("agenda", Context.MODE_PRIVATE);
         String nom = name.getText().toString();
         String correu = email.getText().toString();
+        int color = colorFondo;
         SharedPreferences.Editor editor= preferences.edit();
         editor.putString("user",nom);
         editor.putString("correu",correu);
+        editor.putInt("color", color);
         editor.commit();
     }
 
@@ -75,12 +81,16 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("agenda",Context.MODE_PRIVATE);
         String nom = preferences.getString("user","");
         String correu = preferences.getString("correu","");
+        int color = preferences.getInt("color",Color.WHITE);
+
         name.setText(nom);
         email.setText(correu);
+        constraintLayout.setBackgroundColor(color);
 
         Intent intent = new Intent(this, MainActivity2.class);
-        intent.putExtra("username", name.getText().toString());
-        intent.putExtra("useremail", email.getText().toString());
+        intent.putExtra("username", nom);
+        intent.putExtra("useremail", correu);
+        intent.putExtra("usercolor", color);
         startActivity(intent);
 
     }
